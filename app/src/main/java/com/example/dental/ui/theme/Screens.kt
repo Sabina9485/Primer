@@ -273,7 +273,9 @@ fun DoctorsScreen(vm: MainViewModel, nav: NavController) {
     val list = remember(all, q) {
         all.filter { q.isBlank() || "${it.doctor.lastName} ${it.doctor.firstName} ${it.doctor.specialization} ${it.positionTitle}".contains(q.trim(), ignoreCase = true) }
     }
-    AppScreen("Врачи", vm, "${all.size} в штате", null, "Новый врач" to { nav.navigate("doctor_edit/0") }) {
+
+    // В параметр onBack (третий аргумент) передана функция возврата назад:
+    AppScreen("Врачи", vm, "${all.size} в штате", onBack = { nav.popBackStack() }, fab = "Новый врач" to { nav.navigate("doctor_edit/0") }) {
         SearchBar(q, { q = it }, "ФИО, специализация или должность")
         ListBody(list, { it.doctor.id }, if (all.isEmpty()) "Врачей пока нет" else "Ничего не найдено") { item ->
             val d = item.doctor
@@ -303,7 +305,8 @@ fun ServicesScreen(vm: MainViewModel, nav: NavController) {
     var q by remember { mutableStateOf("") }
     var pending by remember { mutableStateOf<(() -> Unit)?>(null) }
     val list = remember(all, q) { all.filter { q.isBlank() || "${it.title} ${it.type} ${it.description}".contains(q.trim(), ignoreCase = true) } }
-    AppScreen("Услуги", vm, "${all.size} в прайсе", null, "Новая услуга" to { nav.navigate("service_edit/0") }) {
+
+    AppScreen("Услуги", vm, "${all.size} в прайсе", onBack = { nav.popBackStack() }, fab = "Новая услуга" to { nav.navigate("service_edit/0") }) {
         SearchBar(q, { q = it }, "Название или тип услуги")
         ListBody(list, { it.id }, if (all.isEmpty()) "Услуг пока нет" else "Ничего не найдено") { s ->
             AppCard(Modifier.animateItem(), onClick = { nav.navigate("service_edit/${s.id}") }) {
